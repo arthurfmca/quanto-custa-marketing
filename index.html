@@ -214,6 +214,41 @@ tbody tr:hover{background:var(--n100);}
 /* ── FOOTER ─────────────────────────────────────── */
 .ft{text-align:center;padding:20px 16px;font-size:10px;color:var(--n400);border-top:1px solid var(--brd);max-width:860px;margin:0 auto;}
 
+/* ── HINT — texto de ajuda abaixo do label ──────── */
+.hint{font-size:11px;color:var(--n400);margin-top:3px;line-height:1.45;}
+
+/* ── TOOLTIP ? ──────────────────────────────────── */
+.tip{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;
+  border-radius:50%;background:var(--n200);color:var(--fgm);font-size:9px;font-weight:800;
+  cursor:help;position:relative;margin-left:5px;vertical-align:middle;flex-shrink:0;
+  border:none;padding:0;font-family:var(--f);}
+.tip::after{
+  content:attr(data-tip);
+  display:none;
+  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
+  background:var(--fg1);color:#fff;font-size:11px;font-weight:400;
+  padding:7px 11px;border-radius:6px;white-space:normal;
+  min-width:200px;max-width:260px;z-index:100;line-height:1.5;text-align:left;
+  box-shadow:0 4px 16px rgba(0,0,0,.18);
+}
+.tip::before{
+  content:'';display:none;
+  position:absolute;bottom:calc(100% + 3px);left:50%;transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:var(--fg1);z-index:100;
+}
+.tip:hover::after,.tip:hover::before,.tip.open::after,.tip.open::before{display:block;}
+
+/* ── INTRO BOX ──────────────────────────────────── */
+.intro{
+  background:var(--blue-bg);border-left:3px solid var(--blue-lt);
+  padding:10px 14px;border-radius:0 var(--r-input) var(--r-input) 0;
+  font-size:12px;line-height:1.6;color:var(--fg2);margin-bottom:20px;
+}
+.intro strong{color:var(--fg1);}
+
+/* ── SCENARIO DESC ──────────────────────────────── */
+.sc-desc{font-size:11px;color:var(--fgm);margin-top:-10px;margin-bottom:16px;min-height:16px;}
+
 /* ── STICKY HEADER ───────────────────────────────
    Positiva: logo azul #2687E9 sobre branco.
    Amarelo só no CTA (btn). Sombra blue-tinted.    */
@@ -391,7 +426,9 @@ tbody tr:hover{background:var(--n100);}
       <path d="M159.377 0.620117C159.044 88.1514 88.1514 159.043 0.62011 159.376L0.620117 0.62011L159.377 0.620117Z" stroke="#2687E9" stroke-width="1.24"/>
     </svg>
 
-    <div class="ct">Configure o cenário</div>
+    <div class="ct">Conte sobre a sua empresa</div>
+
+    <div class="intro">Escolha um perfil abaixo ou ajuste os números para a realidade do seu negócio. A calculadora projeta o que acontece nos dois caminhos: <strong>com e sem investimento em marketing.</strong></div>
 
     <div class="tabs">
       <button class="tb" onclick="applyS('conservador')">Conservador</button>
@@ -399,45 +436,56 @@ tbody tr:hover{background:var(--n100);}
       <button class="tb" onclick="applyS('agressivo')">Agressivo</button>
       <button class="tb" id="tbC" style="display:none" onclick="applyS('custom')">Personalizado</button>
     </div>
+    <p class="sc-desc" id="scDesc">Equilíbrio entre investimento e resultado — o perfil mais comum para pequenas empresas.</p>
 
     <div class="ig">
       <div class="g">
-        <label>Faturamento anual</label>
+        <label>Quanto sua empresa fatura por ano?</label>
         <div class="iw"><span class="px">R$</span>
           <input type="number" id="revenue" value="1000000" min="10000" max="999999999" step="10000">
         </div>
+        <span class="hint">Some todas as vendas dos últimos 12 meses.</span>
         <span class="wn" id="wr">Mínimo: R$ 10 mil.</span>
       </div>
       <div class="g">
-        <label>Crescimento <span class="h">sem marketing</span></label>
+        <label>Crescimento sem divulgação
+          <button class="tip" data-tip="É o quanto seu negócio cresce naturalmente, sem nenhuma campanha ou anúncio — apenas pela indicação de clientes e por estar aberto.">?</button>
+        </label>
         <div class="iw">
           <input type="number" id="gnm" value="5" min="0" max="50">
           <span class="sx">%</span>
         </div>
-        <span class="wn" id="wg">0%–50%.</span>
+        <span class="hint">Crescimento natural, sem marketing. Ex.: 5% ao ano.</span>
+        <span class="wn" id="wg">Valor entre 0% e 50%.</span>
       </div>
       <div class="g">
-        <label>Crescimento <span class="h">com marketing</span></label>
+        <label>Crescimento com divulgação
+          <button class="tip" data-tip="Estimativa de crescimento anual investindo em marketing: anúncios, redes sociais, Google, etc. Empresas de médio porte costumam crescer 15%–30% ao ano com estratégia consistente.">?</button>
+        </label>
         <div class="iw">
           <input type="number" id="gwm" value="18" min="1" max="150">
           <span class="sx">%</span>
         </div>
-        <span class="wn" id="wgw">Deve ser maior que sem marketing.</span>
+        <span class="hint">Crescimento esperado investindo em marketing. Deve ser maior que sem divulgação.</span>
+        <span class="wn" id="wgw">Deve ser maior que sem divulgação.</span>
       </div>
       <div class="g">
-        <label>Investimento <span class="h">% da receita</span></label>
+        <label>Quanto investir em marketing?
+          <button class="tip" data-tip="Percentual do seu faturamento destinado a marketing. Empresas saudáveis costumam investir entre 5% e 12%. Se você fatura R$ 500 mil, 8% equivale a R$ 40 mil por ano — ou R$ 3,3 mil por mês.">?</button>
+        </label>
         <div class="iw">
           <input type="number" id="mkt" value="8" min="1" max="40" step="0.5">
           <span class="sx">%</span>
         </div>
-        <span class="wn" id="wm">1%–40%.</span>
+        <span class="hint">% do faturamento anual. Recomendado: entre 5% e 12%.</span>
+        <span class="wn" id="wm">Valor entre 1% e 40%.</span>
       </div>
     </div>
 
     <div class="dv"></div>
 
     <div class="rg">
-      <label>Horizonte de projeção: <strong id="yl" style="color:var(--blue)">5 anos</strong></label>
+      <label>Por quantos anos você quer projetar? <strong id="yl" style="color:var(--blue)">5 anos</strong></label>
       <input type="range" id="years" min="1" max="10" value="5">
       <div class="rl"><span>1 ano</span><span>5</span><span>10 anos</span></div>
     </div>
@@ -450,35 +498,41 @@ tbody tr:hover{background:var(--n100);}
       <path d="M80 159.38C36.1596 159.38 0.62012 123.84 0.620124 80C0.620132 36.1596 36.1597 0.620113 80 0.620116L87.3799 0.620117L87.3799 159.38L80 159.38Z" stroke="#2687E9" stroke-width="1.24"/>
     </svg>
 
-    <div class="ct">Projeção ao final de <span id="yt">5</span> anos</div>
+    <div class="ct">O que acontece com o seu negócio em <span id="yt">5</span> anos</div>
+
+    <div class="intro">Veja a diferença entre os dois caminhos: <strong>continuar como está</strong> ou <strong>investir em divulgação.</strong> Os números mostram o faturamento estimado no final do período.</div>
 
     <!-- Comparison: sem vs com — only typography, no colored backgrounds -->
     <div class="cmp">
       <div class="cmp-col dim">
-        <span class="cmp-lbl">Sem marketing</span>
+        <span class="cmp-lbl">Sem divulgação</span>
         <span class="cmp-val" id="vnm">—</span>
         <span class="cmp-sub" id="dnm">—</span>
       </div>
       <div class="cmp-vs">vs</div>
       <div class="cmp-col hi">
-        <span class="cmp-lbl">Com marketing</span>
+        <span class="cmp-lbl">Investindo em marketing</span>
         <span class="cmp-val" id="vwm">—</span>
         <span class="cmp-sub" id="dwm">—</span>
       </div>
     </div>
 
-    <!-- Key metrics row — no box containers, label + value pairs separated by line -->
+    <!-- Key metrics row -->
     <div class="km">
       <div class="kmi">
-        <div class="km-l">Receita adicional</div>
+        <div class="km-l">Quanto a mais você faturaria
+          <button class="tip" data-tip="A diferença de faturamento entre os dois caminhos ao final do período. É o dinheiro que o marketing traz a mais para o seu negócio.">?</button>
+        </div>
         <div class="km-v hi" id="vdelta">—</div>
       </div>
       <div class="kmi">
-        <div class="km-l">Investido em marketing</div>
+        <div class="km-l">Total investido em marketing</div>
         <div class="km-v" id="vmktotal">—</div>
       </div>
       <div class="kmi">
-        <div class="km-l">ROI acumulado</div>
+        <div class="km-l">Retorno do investimento
+          <button class="tip" data-tip="Para cada R$ 1 investido em marketing, quanto você recebeu de volta (além do valor investido). Exemplo: +150% significa que cada R$ 1 virou R$ 2,50.">?</button>
+        </div>
         <div class="km-v hi" id="vroi">—</div>
       </div>
     </div>
@@ -488,23 +542,27 @@ tbody tr:hover{background:var(--n100);}
 
   <!-- ── CARD 3: CHART ──────────────────────────────── -->
   <div class="card">
-    <div class="ct">Evolução do faturamento — com vs. sem marketing</div>
+    <div class="ct">Como o seu faturamento cresce ao longo do tempo</div>
+    <div class="intro">A <strong>linha azul</strong> mostra o caminho investindo em marketing. A <strong>linha cinza</strong> é sem divulgação. Quanto maior a distância entre elas, mais dinheiro você estaria deixando na mesa.</div>
     <div class="cw"><canvas id="growthChart"></canvas></div>
   </div>
 
   <!-- ── CARD 4: TABLE ──────────────────────────────── -->
   <div class="card">
-    <div class="ct">Evolução ano a ano</div>
+    <div class="ct">Detalhamento ano a ano</div>
+    <div class="intro">Veja exatamente o que acontece em cada ano: quanto você faturaria, quanto investiria em divulgação e quanto a mais isso traria para o seu negócio.</div>
     <div class="tw">
       <table>
         <thead>
           <tr>
             <th>Ano</th>
-            <th>Sem marketing</th>
+            <th>Sem divulgação</th>
             <th>Com marketing</th>
             <th>Investido em mkt</th>
-            <th>Ganho adicional</th>
-            <th>ROI acumulado</th>
+            <th>Quanto a mais</th>
+            <th>Retorno acum.
+              <button class="tip" style="color:var(--n400)" data-tip="Retorno acumulado do investimento em marketing até aquele ano. Positivo significa que o marketing trouxe mais do que custou.">?</button>
+            </th>
           </tr>
         </thead>
         <tbody id="ytb"></tbody>
@@ -514,32 +572,41 @@ tbody tr:hover{background:var(--n100);}
 
   <!-- ── CARD 5: MARKET SHARE ────────────────────────── -->
   <div class="card">
-    <div class="ct">Perda de market share</div>
+    <div class="ct">Sua fatia do mercado
+      <button class="tip" data-tip="Participação de mercado é a parte do total vendido no seu setor que vem da sua empresa. É como uma pizza: se o mercado fatura R$10M e você fatura R$500K, você tem 5% da pizza.">?</button>
+    </div>
+    <div class="intro"><strong>Imagine que o seu mercado é uma pizza.</strong> Enquanto o mercado cresce, sem marketing a sua fatia vai encolhendo — mesmo que você venda um pouco mais. Quem investe em divulgação mantém ou aumenta seu pedaço.</div>
     <div class="sg">
       <div class="share-inputs">
         <div class="g">
-          <label>Crescimento do mercado <span class="h">a.a.</span></label>
+          <label>Quanto o seu mercado cresce por ano?
+            <button class="tip" data-tip="Em média, quantos % por ano cresce o total de vendas do setor em que você atua. Se você vende software para restaurantes, é o crescimento desse mercado como um todo.">?</button>
+          </label>
           <div class="iw">
             <input type="number" id="mg" value="10" min="1" max="50">
             <span class="sx">%</span>
           </div>
+          <span class="hint">Crescimento anual do seu setor. Média brasileira: 8%–12% a.a.</span>
         </div>
         <div class="g">
-          <label>Seu share atual <span class="h">estimado</span></label>
+          <label>Qual é a sua parte do mercado hoje?
+            <button class="tip" data-tip="Estimativa do percentual do mercado que você representa. Se você não sabe, use 1%–5% para pequenas empresas. Ex.: se o mercado fatura R$50M e você fatura R$2,5M, sua parte é 5%.">?</button>
+          </label>
           <div class="iw">
             <input type="number" id="ss" value="5" min="0.01" max="100" step="0.1">
             <span class="sx">%</span>
           </div>
+          <span class="hint">Não sabe? Use entre 1% e 5% para pequenas empresas.</span>
         </div>
         <div class="co" id="co2" style="margin-top:0">—</div>
       </div>
       <div class="sbars">
         <div class="sr">
-          <div class="srh"><span class="srl">Share hoje</span><span class="srv" id="ssv">—</span></div>
+          <div class="srh"><span class="srl">Sua fatia hoje</span><span class="srv" id="ssv">—</span></div>
           <div class="bt"><div class="bf st" id="ssb" style="width:5%"></div></div>
         </div>
         <div class="sr">
-          <div class="srh"><span class="srl">Sem marketing (em <span id="yls">5</span> anos)</span><span class="srv" id="snmv">—</span></div>
+          <div class="srh"><span class="srl">Sem divulgação (em <span id="yls">5</span> anos)</span><span class="srv" id="snmv">—</span></div>
           <div class="bt"><div class="bf nm" id="snmb" style="width:4%"></div></div>
         </div>
         <div class="sr">
@@ -559,8 +626,8 @@ tbody tr:hover{background:var(--n100);}
       <path d="M159.377 0.620117C159.044 88.1514 88.1514 159.043 0.62011 159.376L0.620117 0.62011L159.377 0.620117Z" stroke="#2687E9" stroke-width="1.24"/>
     </svg>
     <div class="cta-in">
-      <h2>Você já tem o diagnóstico. <strong>Agora coloque em prática.</strong></h2>
-      <p>A Conta Azul organiza suas finanças para você liberar margem e investir em crescimento.</p>
+      <h2>Você já sabe o tamanho da oportunidade. <strong>Hora de agir.</strong></h2>
+      <p>A Conta Azul organiza o financeiro da sua empresa para você saber exatamente onde está o dinheiro — e quanto sobra para investir em crescimento.</p>
       <a href="https://app.contaazul.com/auth/signup" target="_blank" class="btn">Teste grátis por 30 dias</a>
     </div>
   </div>
@@ -568,7 +635,7 @@ tbody tr:hover{background:var(--n100);}
 </div><!-- /page -->
 
 <footer class="ft">
-  Projeção simplificada para fins educativos. Crescimento composto aplicado sobre o faturamento do ano base. Investimento em marketing deduzido da receita com marketing para apurar ROI líquido. Não substitui análise financeira profissional.<br>
+  Os números são estimativas baseadas em crescimento composto e servem para ilustrar o impacto do marketing ao longo do tempo. Não substituem uma análise financeira profissional.<br>
   <span style="display:block;margin-top:4px">© 2026 Conta Azul. Todos os direitos reservados.</span>
 </footer>
 
@@ -580,6 +647,11 @@ tbody tr:hover{background:var(--n100);}
     conservador:{gnm:3,gwm:12,mkt:5},
     moderado:   {gnm:5,gwm:18,mkt:8},
     agressivo:  {gnm:5,gwm:30,mkt:12}
+  };
+  var SCENARIO_DESC = {
+    conservador:'Crescimento mais tímido, com investimento menor em marketing. Bom ponto de partida para quem ainda não divulga.',
+    moderado:'Equilíbrio entre investimento e resultado — o perfil mais comum para pequenas empresas.',
+    agressivo:'Alto investimento em marketing, crescimento acelerado. Para quem quer escalar o negócio rapidamente.'
   };
   var chart = null;
 
@@ -626,10 +698,11 @@ tbody tr:hover{background:var(--n100);}
   function applyS(key){
     document.querySelectorAll('.tb').forEach(function(b){b.classList.remove('act');});
     var tc=el('tbC');
-    if(key==='custom'){tc.classList.add('act');return;}
+    if(key==='custom'){tc.classList.add('act');el('scDesc').textContent='Você ajustou os valores manualmente.';return;}
     tc.style.display='none';
     var s=SCENARIOS[key];
     el('gnm').value=s.gnm;el('gwm').value=s.gwm;el('mkt').value=s.mkt;
+    if(el('scDesc'))el('scDesc').textContent=SCENARIO_DESC[key]||'';
     document.querySelectorAll('.tb').forEach(function(b){
       if(b.textContent.trim().toLowerCase()===key)b.classList.add('act');
     });
@@ -642,7 +715,20 @@ tbody tr:hover{background:var(--n100);}
       var tc=el('tbC');tc.style.display='';
       document.querySelectorAll('.tb').forEach(function(b){b.classList.remove('act');});
       tc.classList.add('act');
+      if(el('scDesc'))el('scDesc').textContent='Você ajustou os valores manualmente.';
     });
+  });
+
+  /* Tooltip mobile — toggle .open on click */
+  document.addEventListener('click',function(e){
+    var btn=e.target.closest('.tip');
+    if(btn){
+      e.stopPropagation();
+      document.querySelectorAll('.tip.open').forEach(function(t){if(t!==btn)t.classList.remove('open');});
+      btn.classList.toggle('open');
+    } else {
+      document.querySelectorAll('.tip.open').forEach(function(t){t.classList.remove('open');});
+    }
   });
 
   /* ── Recalc ──────────────────────────────── */
@@ -681,10 +767,11 @@ tbody tr:hover{background:var(--n100);}
     pop('vroi',roi(roiFin));
 
     /* Callout */
+    var roiMult=(1+roiFin/100).toFixed(2).replace('.',',');
     el('co1').innerHTML=
-      'Com marketing, você fatura <span class="n">'+fmt(fWm)+'</span> no '+yrs+'º ano — '+
+      'Investindo em divulgação, você chegaria a <span class="n">'+fmt(fWm)+'</span> no '+yrs+'º ano — '+
       '<strong>'+mult+'× mais</strong> do que os '+fmt(fNm)+' sem marketing. '+
-      'O investimento acumulado de '+fmt(totMkt)+' gera <strong>ROI de '+roi(roiFin)+'</strong>.';
+      'Para cada <strong>R$ 1,00</strong> investido em marketing, você receberia de volta <span class="n">R$ '+roiMult+'</span>.';
 
     /* Chart */
     buildChart(labels,sNm,sWm);
@@ -714,8 +801,8 @@ tbody tr:hover{background:var(--n100);}
     el('snmb').style.width=Math.min(100,shNm/mx*100)+'%';
     el('swmb').style.width=Math.min(100,shWm/mx*100)+'%';
     el('co2').innerHTML=shLoss>0
-      ?'Sem marketing, em '+yl+' você perde <strong>'+pct(shLoss)+'</strong> de market share: de <span class="n">'+pct(shr)+'</span> para <span class="n">'+pct(shNm)+'</span>. Com marketing: <strong>'+pct(shWm)+'</strong>.'
-      :'Com marketing você cresce de <span class="n">'+pct(shr)+'</span> para <span class="n">'+pct(shWm)+'</span>.';
+      ?'Sem divulgação, em '+yl+' a sua fatia do mercado encolhe de <span class="n">'+pct(shr)+'</span> para apenas <span class="n">'+pct(shNm)+'</span> — uma perda de <strong>'+pct(shLoss)+'</strong> do seu espaço. Investindo em marketing, você vai para <strong>'+pct(shWm)+'</strong>.'
+      :'Investindo em marketing, a sua fatia do mercado cresce de <span class="n">'+pct(shr)+'</span> para <span class="n">'+pct(shWm)+'</span>.';
   }
 
   /* ── Chart ───────────────────────────────── */
