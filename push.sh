@@ -1,5 +1,5 @@
 #!/bin/bash
-# push.sh — atualiza o arquivo e faz deploy automático na Vercel via GitHub
+# push.sh — atualiza arquivos e faz deploy automático na Vercel via GitHub
 # Uso: ./push.sh [mensagem opcional]
 # Exemplo: ./push.sh "ajusta copy do hero"
 
@@ -11,7 +11,7 @@ cd "$SCRIPT_DIR"
 # Mensagem de commit: usa o argumento passado ou gera automática com data/hora
 MSG="${1:-atualiza calculadora $(date '+%d/%m/%Y %H:%M')}"
 
-git add index.html
+git add -A
 git commit -m "chore: $MSG" 2>/dev/null || echo "Nenhuma alteração para commitar."
 git push origin main
 

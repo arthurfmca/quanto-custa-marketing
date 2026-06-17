@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quanto custa não ter marketing? — Conta Azul</title>
+<!-- Favicon: círculo azul CA -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%232687E9'/%3E%3Ctext x='16' y='22' font-family='system-ui%2Csans-serif' font-weight='800' font-size='14' fill='white' text-anchor='middle'%3ECA%3C/text%3E%3C/svg%3E">
+<!-- Open Graph / WhatsApp -->
+<meta property="og:type"        content="website">
+<meta property="og:title"       content="Quanto custa não ter marketing?">
+<meta property="og:description" content="Marketing não é custo — é juro composto. Calcule o impacto real no faturamento da sua empresa.">
+<meta property="og:image"       content="https://artifact-mkt-calc.vercel.app/og-image.png">
+<meta property="og:url"         content="https://artifact-mkt-calc.vercel.app/">
+<meta name="twitter:card"       content="summary_large_image">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 <style>
 /* ── TOKENS ──────────────────────────────────────────── */
@@ -204,6 +213,37 @@ tbody tr:hover{background:var(--n100);}
 /* ── FOOTER ─────────────────────────────────────── */
 .ft{text-align:center;padding:20px 16px;font-size:10px;color:var(--n400);border-top:1px solid var(--brd);max-width:860px;margin:0 auto;}
 
+/* ── ANIMATIONS ──────────────────────────────────
+   Card stagger on load · metric popIn · btn pulse  */
+@keyframes fadeSlideIn{
+  from{opacity:0;transform:translateY(18px);}
+  to  {opacity:1;transform:translateY(0);}
+}
+@keyframes popIn{
+  0%  {opacity:.4;transform:scale(.88);}
+  65% {transform:scale(1.05);}
+  100%{opacity:1;transform:scale(1);}
+}
+@keyframes btnPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(249,189,29,.55);}
+  55%    {box-shadow:0 0 0 10px rgba(249,189,29,0);}
+}
+
+/* Card entrance — staggered */
+.card{animation:fadeSlideIn .45s ease-out both;}
+.card:nth-child(1){animation-delay:.04s;}
+.card:nth-child(2){animation-delay:.11s;}
+.card:nth-child(3){animation-delay:.18s;}
+.card:nth-child(4){animation-delay:.25s;}
+.card:nth-child(5){animation-delay:.32s;}
+.cta{animation:fadeSlideIn .45s ease-out .38s both;}
+
+/* Metric value pop on update */
+.pop{animation:popIn .32s cubic-bezier(.4,0,.2,1) forwards;}
+
+/* Button pulse on hover */
+.btn:hover{animation:btnPulse 1.6s ease infinite;}
+
 /* ── RESPONSIVE ────────────────────────────────── */
 @media(max-width:580px){
   .card{padding:22px 18px;}
@@ -236,7 +276,7 @@ tbody tr:hover{background:var(--n100);}
   <div class="hero-in">
     <!-- Logo negativo (branco) sobre azul -->
     <div class="hero-logo">
-      <svg width="140" height="54" viewBox="0 0 368 142" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:22px;width:auto">
+      <svg width="140" height="54" viewBox="0 0 368 142" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:38px;width:auto">
         <path d="M114.912 62.5162C107.598 62.5162 102.826 68.0885 102.826 74.5672C102.826 81.0459 107.399 86.665 114.912 86.665C122.424 86.665 126.91 80.9816 126.91 74.5672C126.91 68.1529 122.36 62.5162 114.912 62.5162ZM114.871 80.9874C111.106 80.9874 109.343 77.8709 109.343 74.5731C109.343 71.2753 111.106 68.2055 114.918 68.2055C118.73 68.2055 120.381 71.2577 120.381 74.5731C120.404 77.8709 118.683 80.9874 114.871 80.9874Z" fill="white"/>
         <path d="M99.8458 78.9936L96.6253 76.4735C95.1029 78.865 92.6611 80.4554 89.3528 80.4554C84.2117 80.4554 81.2547 76.339 81.2547 70.9888C81.2547 65.6386 83.9131 61.569 89.4875 61.569C92.7314 61.569 94.9096 63.0308 96.391 65.4164L99.6584 62.8495C100.42 62.2531 100.572 61.1714 100.027 60.3937C97.5211 56.8562 93.6507 55.3301 89.4465 55.3301C79.258 55.3301 74.5327 63.0951 74.5327 70.9654C74.5327 80.2975 79.9548 86.6709 89.3352 86.6709C93.8205 86.6709 97.7612 85.0337 100.221 81.4319C100.789 80.6367 100.613 79.5491 99.875 78.9761L99.8516 78.9994L99.8458 78.9936Z" fill="white"/>
         <path d="M143.961 62.5162C140.74 62.5162 138.17 63.9429 136.425 66.2935C136.384 65.662 136.296 65.0071 136.144 64.3054C135.863 63.4459 135.23 63.06 134.252 63.06H130.44V86.6709H136.975V75.4326C136.975 70.6379 139.153 68.3341 142.397 68.3341C144.968 68.3341 146.402 69.9421 146.402 73.199V86.6767H152.937V73.468C152.896 66.2058 149.652 62.5454 143.943 62.5454H143.966V62.522L143.961 62.5162Z" fill="white"/>
@@ -524,6 +564,13 @@ tbody tr:hover{background:var(--n100);}
   function cpd(b,r,y){return b*Math.pow(1+r/100,y);}
   function v(id){return document.getElementById(id).value;}
   function el(id){return document.getElementById(id);}
+  function pop(id,txt){
+    var e=el(id);
+    e.textContent=txt;
+    e.classList.remove('pop');
+    void e.offsetWidth;
+    e.classList.add('pop');
+  }
 
   /* ── Validation ──────────────────────────── */
   function validate(){
@@ -592,14 +639,14 @@ tbody tr:hover{background:var(--n100);}
     var roiFin=totMkt>0?((accD-totMkt)/totMkt)*100:0;
     var mult=(fWm/fNm).toFixed(1);
 
-    /* Stats */
-    el('vnm').textContent=fmt(fNm);
+    /* Stats — com animação de pop nas métricas */
+    pop('vnm',fmt(fNm));
     el('dnm').textContent=gnm+'% a.a. por '+yl;
-    el('vwm').textContent=fmt(fWm);
+    pop('vwm',fmt(fWm));
     el('dwm').textContent=gwm+'% a.a. por '+yl;
-    el('vdelta').textContent=fmt(delta);
-    el('vmktotal').textContent=fmt(totMkt);
-    el('vroi').textContent=roi(roiFin);
+    pop('vdelta',fmt(delta));
+    pop('vmktotal',fmt(totMkt));
+    pop('vroi',roi(roiFin));
 
     /* Callout */
     el('co1').innerHTML=
