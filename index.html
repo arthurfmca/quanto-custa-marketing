@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quanto custa não ter marketing? — Conta Azul</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+/* ── TOKENS ──────────────────────────────────────────── */
+:root{
+  --blue:    #2687E9;
+  --blue-dk: #1B69C8;
+  --blue-lt: #5AADF1;
+  --blue-bg: #EFF3F7;
+  --yellow:  #F9BD1D;
+  --yellow-h:#FFCA3D;
+  --yellow-a:#F0A700;
+  --red:     #FF3D32;
+  --fg1:     #20262B;
+  --fg2:     #35414B;
+  --fgm:     #595959;
+  --n100:    #F1F3F5;
+  --n200:    #E9ECEF;
+  --n300:    #DEE2E6;
+  --n400:    #ADB5BD;
+  --brd:     #C9D3DD;
+  --brd-i:   #C1C3C7;
+  --sh-sm:   0 4px 24px rgba(3,78,152,.09);
+  --sh-md:   0 8px 40px rgba(3,78,152,.14);
+  --f:       -apple-system,'Segoe UI',system-ui,sans-serif;
+
+  /* CA spec radii — only these, no others on containers */
+  --r-card:    40px 0 40px 0;      /* pricing card */
+  --r-section: 0 0 80px 80px;      /* section break / CTA */
+  --r-pill:    9000px;             /* tabs, buttons */
+  --r-input:   4px;                /* form inputs */
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--f);background:var(--blue-bg);color:var(--fg2);line-height:1.5;}
+
+/* ── HERO ─────────────────────────────────────────────
+   Blue field. Arena SVGs white via filter.            */
+.hero{background:var(--blue);position:relative;overflow:hidden;padding:44px 24px 72px;}
+.a-right{position:absolute;right:-30px;top:50%;transform:translateY(-50%);width:300px;opacity:.11;filter:brightness(0) invert(1);pointer-events:none;}
+.a-circle{position:absolute;right:200px;top:50%;transform:translateY(-50%);width:150px;opacity:.07;filter:brightness(0) invert(1);pointer-events:none;}
+.a-corner{position:absolute;left:-16px;bottom:52px;width:80px;opacity:.06;filter:brightness(0) invert(1);pointer-events:none;transform:rotate(180deg);}
+.hero-in{max-width:820px;margin:0 auto;position:relative;z-index:1;}
+.hero-logo{margin-bottom:28px;}
+.hero-ey{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:10px;}
+.hero-h{font-weight:300;font-size:clamp(24px,4vw,44px);line-height:1.08;letter-spacing:-1.2px;color:#fff;margin-bottom:12px;}
+.hero-h strong{font-weight:800;color:var(--yellow);}
+.hero-sub{font-size:14px;line-height:1.65;color:rgba(255,255,255,.75);max-width:480px;}
+.hero-sub b{font-weight:700;color:#fff;}
+
+/* ── GRAFISMO STRIP ───────────────────────────────────
+   Pill · semicircle · quarter-round · circle, equidistant height 40px, gap 8px.
+   Decorative edge — never behind body text.           */
+.gfx-strip{position:absolute;bottom:0;left:0;right:0;height:48px;pointer-events:none;}
+.gfx-strip svg{display:block;}
+.gfx-sep{width:100%;height:36px;display:block;overflow:hidden;flex-shrink:0;}
+
+/* ── PAGE ─────────────────────────────────────────── */
+.page{max-width:860px;margin:0 auto;padding:24px 16px 56px;display:flex;flex-direction:column;gap:16px;}
+
+/* ── CARD ─────────────────────────────────────────────
+   Shape: 40px 0 40px 0 — only valid CA container      */
+.card{
+  background:#fff;
+  border:1px solid var(--brd);
+  border-radius:var(--r-card);
+  padding:28px 32px;
+  box-shadow:var(--sh-sm);
+  position:relative;
+  overflow:hidden;
+}
+.card-deco{position:absolute;right:-12px;bottom:-12px;pointer-events:none;opacity:.045;}
+.ct{font-size:10px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--fgm);margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--n200);}
+.dv{height:1px;background:var(--n200);margin:20px 0;}
+
+/* ── TABS — pill shape ────────────────────────────── */
+.tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;}
+.tb{font-size:11px;font-weight:700;padding:6px 16px;border-radius:var(--r-pill);border:1.5px solid var(--brd);background:transparent;color:var(--fgm);cursor:pointer;transition:all .2s;line-height:1;}
+.tb:hover{border-color:var(--blue);color:var(--blue);}
+.tb.act{background:var(--blue);border-color:var(--blue);color:#fff;}
+
+/* ── INPUTS ──────────────────────────────────────── */
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g{display:flex;flex-direction:column;gap:5px;}
+label{font-size:11px;font-weight:600;color:var(--fg2);}
+label .h{font-weight:400;color:var(--n400);}
+.iw{position:relative;}
+.px,.sx{position:absolute;top:50%;transform:translateY(-50%);font-size:11px;font-weight:600;color:var(--n400);pointer-events:none;z-index:1;}
+.px{left:10px;} .sx{right:10px;}
+input[type=number]{
+  width:100%;background:#fff;
+  border:1.5px solid var(--brd-i);
+  border-radius:var(--r-input);
+  color:var(--fg1);font-family:var(--f);
+  font-size:13px;font-weight:700;
+  padding:9px 34px 9px 28px;
+  outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  -moz-appearance:textfield;
+}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
+input[type=number]:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(38,135,233,.12);}
+input[type=number].warn{border-color:var(--red);}
+.wn{font-size:10px;color:var(--red);display:none;margin-top:2px;}
+.wn.vis{display:block;}
+
+/* Range */
+.rg{display:flex;flex-direction:column;gap:6px;}
+.rg input[type=range]{
+  -webkit-appearance:none;width:100%;height:5px;
+  border-radius:999px;background:var(--n200);
+  outline:none;cursor:pointer;border:none;padding:0;
+}
+.rg input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:18px;height:18px;
+  border-radius:50%;background:var(--blue);
+  border:3px solid #fff;box-shadow:0 2px 8px rgba(3,78,152,.25);cursor:pointer;
+}
+.rl{display:flex;justify-content:space-between;font-size:10px;color:var(--n400);}
+
+/* ── COMPARISON STATS — clean typography, no chip BGs ──
+   Rule: blue for "com marketing" primary number.
+   Yellow only on CTA. No colored containers here.     */
+.cmp{display:grid;grid-template-columns:1fr 40px 1fr;gap:0;align-items:center;margin-bottom:24px;}
+.cmp-col{display:flex;flex-direction:column;gap:6px;}
+.cmp-col.dim .cmp-val{color:var(--n400);}
+.cmp-col.hi  .cmp-val{color:var(--blue);}
+.cmp-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--fgm);}
+.cmp-val{font-size:clamp(24px,3.2vw,36px);font-weight:800;letter-spacing:-1px;line-height:1;}
+.cmp-sub{font-size:11px;color:var(--n400);}
+.cmp-vs{text-align:center;font-size:10px;font-weight:700;color:var(--n300);}
+
+/* Key metrics row — label + value pairs, no box */
+.km{display:flex;gap:0;border-top:1px solid var(--n200);padding-top:16px;flex-wrap:wrap;}
+.kmi{flex:1;min-width:140px;padding:0 0 0 0;border-right:1px solid var(--n200);padding-right:20px;margin-right:20px;}
+.kmi:last-child{border-right:none;padding-right:0;margin-right:0;}
+.km-l{font-size:9px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--fgm);margin-bottom:5px;}
+.km-v{font-size:18px;font-weight:800;letter-spacing:-.5px;color:var(--fg1);}
+.km-v.hi{color:var(--blue);}
+.km-v.red{color:var(--red);}
+
+/* Callout — left border accent, no full box background */
+.co{border-left:3px solid var(--blue);padding:11px 16px;font-size:13px;line-height:1.65;color:var(--fg2);margin-top:16px;background:var(--n100);}
+.co strong{color:var(--fg1);font-weight:700;}
+.co .n{color:var(--blue);font-weight:800;}
+
+/* ── CHART ──────────────────────────────────────── */
+.cw{position:relative;height:240px;margin-top:4px;}
+
+/* ── TABLE ──────────────────────────────────────── */
+.tw{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead th{text-align:left;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--fgm);padding:8px 10px;border-bottom:1px solid var(--n200);}
+tbody tr{border-bottom:1px solid var(--n100);}
+tbody tr:last-child{border-bottom:none;}
+tbody td{padding:9px 10px;color:var(--fg2);white-space:nowrap;}
+tbody td:first-child{font-weight:700;color:var(--fg1);}
+td.pos{color:#1fa050;font-weight:700;}
+td.neg{color:var(--red);}
+td.hl {color:var(--blue);font-weight:700;}
+tbody tr:hover{background:var(--n100);}
+
+/* ── MARKET SHARE ───────────────────────────────── */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:20px 36px;}
+@media(max-width:560px){.sg{grid-template-columns:1fr;}}
+.sbars{display:flex;flex-direction:column;gap:14px;}
+.sr{display:flex;flex-direction:column;gap:5px;}
+.srh{display:flex;justify-content:space-between;align-items:baseline;}
+.srl{font-size:11px;color:var(--fg2);}
+.srv{font-size:13px;font-weight:800;color:var(--fg1);}
+.bt{height:8px;background:var(--n200);border-radius:999px;overflow:hidden;}
+.bf{height:100%;border-radius:999px;transition:width .7s cubic-bezier(.4,0,.2,1);}
+.bf.nm{background:var(--n400);}
+.bf.wm{background:var(--blue);}
+.bf.st{background:var(--n300);}
+.share-inputs{display:flex;flex-direction:column;gap:14px;}
+
+/* ── CTA — section-break shape: 0 0 80px 80px ──── */
+.cta{
+  background:var(--blue);
+  border-radius:var(--r-section);
+  padding:40px 36px 48px;
+  box-shadow:var(--sh-md);
+  text-align:center;
+  position:relative;overflow:hidden;
+}
+.cta-al{position:absolute;left:-20px;bottom:0;width:130px;opacity:.09;filter:brightness(0) invert(1);pointer-events:none;}
+.cta-ar{position:absolute;right:-16px;top:10px;width:110px;opacity:.08;filter:brightness(0) invert(1);pointer-events:none;transform:rotate(90deg);}
+.cta-in{position:relative;z-index:1;}
+.cta h2{font-weight:300;font-size:clamp(18px,2.8vw,24px);line-height:1.3;letter-spacing:-.5px;color:#fff;margin-bottom:8px;}
+.cta h2 strong{font-weight:800;}
+.cta p{font-size:13px;color:rgba(255,255,255,.78);margin-bottom:22px;}
+/* CTA button — pill, yellow (only primary action) */
+.btn{display:inline-block;font-size:13px;font-weight:800;color:var(--fg1);background:var(--yellow);border:none;border-radius:var(--r-pill);padding:13px 32px;cursor:pointer;text-decoration:none;transition:background .2s;letter-spacing:-.1px;}
+.btn:hover{background:var(--yellow-h);}
+.btn:active{background:var(--yellow-a);}
+
+/* ── FOOTER ─────────────────────────────────────── */
+.ft{text-align:center;padding:20px 16px;font-size:10px;color:var(--n400);border-top:1px solid var(--brd);max-width:860px;margin:0 auto;}
+
+/* ── RESPONSIVE ────────────────────────────────── */
+@media(max-width:580px){
+  .card{padding:22px 18px;}
+  .hero{padding:36px 16px 68px;}
+  .ig{grid-template-columns:1fr;}
+  .cmp{grid-template-columns:1fr 24px 1fr;}
+  .cmp-val{font-size:22px;}
+  .km{gap:12px;}
+  .kmi{border-right:none;padding-right:0;margin-right:0;border-bottom:1px solid var(--n200);padding-bottom:12px;margin-bottom:0;}
+  .kmi:last-child{border-bottom:none;}
+  .cta{padding:32px 20px 40px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══════════════════════════════════════════ -->
+<header class="hero">
+  <!-- Arena SVGs — white via filter on blue field -->
+  <svg class="a-right" viewBox="0 0 280 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M200 0.62207C243.839 0.62207 279.378 36.1607 279.378 80C279.378 123.839 243.839 159.378 200 159.378H0.62207V0.62207H200Z" stroke="#2687E9" stroke-width="1.24398"/>
+  </svg>
+  <svg class="a-circle" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="80" cy="80" r="79.38" stroke="#2687E9" stroke-width="1.24"/>
+  </svg>
+  <svg class="a-corner" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M159.377 0.620117C159.044 88.1514 88.1514 159.043 0.62011 159.376L0.620117 0.62011L159.377 0.620117Z" stroke="#2687E9" stroke-width="1.24"/>
+  </svg>
+
+  <div class="hero-in">
+    <!-- Logo negativo (branco) sobre azul -->
+    <div class="hero-logo">
+      <svg width="140" height="54" viewBox="0 0 368 142" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:22px;width:auto">
+        <path d="M114.912 62.5162C107.598 62.5162 102.826 68.0885 102.826 74.5672C102.826 81.0459 107.399 86.665 114.912 86.665C122.424 86.665 126.91 80.9816 126.91 74.5672C126.91 68.1529 122.36 62.5162 114.912 62.5162ZM114.871 80.9874C111.106 80.9874 109.343 77.8709 109.343 74.5731C109.343 71.2753 111.106 68.2055 114.918 68.2055C118.73 68.2055 120.381 71.2577 120.381 74.5731C120.404 77.8709 118.683 80.9874 114.871 80.9874Z" fill="white"/>
+        <path d="M99.8458 78.9936L96.6253 76.4735C95.1029 78.865 92.6611 80.4554 89.3528 80.4554C84.2117 80.4554 81.2547 76.339 81.2547 70.9888C81.2547 65.6386 83.9131 61.569 89.4875 61.569C92.7314 61.569 94.9096 63.0308 96.391 65.4164L99.6584 62.8495C100.42 62.2531 100.572 61.1714 100.027 60.3937C97.5211 56.8562 93.6507 55.3301 89.4465 55.3301C79.258 55.3301 74.5327 63.0951 74.5327 70.9654C74.5327 80.2975 79.9548 86.6709 89.3352 86.6709C93.8205 86.6709 97.7612 85.0337 100.221 81.4319C100.789 80.6367 100.613 79.5491 99.875 78.9761L99.8516 78.9994L99.8458 78.9936Z" fill="white"/>
+        <path d="M143.961 62.5162C140.74 62.5162 138.17 63.9429 136.425 66.2935C136.384 65.662 136.296 65.0071 136.144 64.3054C135.863 63.4459 135.23 63.06 134.252 63.06H130.44V86.6709H136.975V75.4326C136.975 70.6379 139.153 68.3341 142.397 68.3341C144.968 68.3341 146.402 69.9421 146.402 73.199V86.6767H152.937V73.468C152.896 66.2058 149.652 62.5454 143.943 62.5454H143.966V62.522L143.961 62.5162Z" fill="white"/>
+        <path d="M169.344 80.6659C168.975 80.7769 168.583 80.8471 168.19 80.8471C165.579 80.8471 164.097 79.245 164.097 75.9004V68.1997H169.935C170.913 68.1997 171.698 67.3635 171.698 66.3695V62.5571H164.097V59.1716C164.097 58.1542 163.289 57.3415 162.335 57.3415H157.569V75.649C157.569 82.4434 160.444 86.6651 166.211 86.6651C169.566 86.6651 171.938 85.1272 173.004 84.2736L171.306 81.4728C170.872 80.7945 170.088 80.4554 169.344 80.6834H169.367L169.344 80.66V80.6659Z" fill="white"/>
+        <path d="M185.956 62.5162C182.361 62.5162 179.644 63.2003 176.962 65.0831C176.072 65.7029 175.914 66.9659 176.593 67.802L178.402 70.0824C180.774 68.1821 182.8 67.802 185.107 67.802C188.158 67.802 190.16 69.4626 190.16 73.0411V73.3276C188.351 72.6669 186.307 72.3102 184.018 72.3102C177.442 72.3102 174.743 75.8945 174.743 79.6075C174.743 83.3205 177.073 86.6417 182.97 86.6417C186.735 86.6417 189.264 84.981 190.787 82.8585C190.828 83.4783 190.915 84.6478 191.021 85.3319C191.214 86.2616 191.934 86.6358 192.912 86.6358H196.285L196.267 73.3919C196.267 65.8082 191.718 62.5103 185.95 62.5103L185.956 62.5162ZM189.897 77.4265C189.504 79.9057 187.566 81.806 184.041 81.806C182.08 81.806 180.756 81.0342 180.756 79.2859C180.756 77.4265 182.062 76.5202 185.089 76.5202C186.899 76.5202 188.374 76.7424 189.943 77.14L189.902 77.4265H189.897Z" fill="white"/>
+        <path d="M255.431 80.777H245.154L255.823 68.3225C256.432 67.6325 256.672 66.9601 256.672 65.9953V62.4929H239.1C238.011 62.4929 237.337 63.136 237.337 64.3581V68.2523H248.591L237.964 80.7068C237.355 81.35 237.05 82.0224 237.05 82.9872V86.5364H257.187V82.6422C257.164 81.4202 256.514 80.777 255.401 80.777H255.431Z" fill="white"/>
+        <path d="M282.366 64.1184C282.366 63.2354 281.669 62.5104 280.843 62.5104H275.854V73.7954C275.854 78.5901 273.805 80.853 270.567 80.853C268.084 80.853 266.714 79.245 266.714 76.0349V64.0891C266.714 63.2062 266.017 62.4812 265.192 62.4812H260.203V75.7601C260.203 82.9287 263.406 86.6651 269.021 86.6651C272.177 86.6651 274.66 85.2384 276.405 82.9346C276.452 83.5427 276.516 84.7764 276.668 85.3904C276.885 86.2733 277.582 86.6826 278.583 86.6826H282.371L282.389 64.095L282.366 64.1184Z" fill="white"/>
+        <path d="M291.705 55.3184H286.939V84.8291C286.939 85.8582 287.747 86.6826 288.701 86.6826H293.468V57.1719C293.468 56.1428 292.659 55.3184 291.705 55.3184Z" fill="white"/>
+        <path d="M221.469 55.3184H215.35L203.768 86.6008H210.432L212.979 79.1222H225.064L227.635 86.6008H234.492L223.518 56.7568C223.167 55.7744 222.453 55.3184 221.469 55.3184ZM214.782 73.2575L219.004 61.2416L223.226 73.2575H214.776H214.782Z" fill="white"/>
+      </svg>
+    </div>
+
+    <p class="hero-ey">Calculadora de crescimento</p>
+    <h1 class="hero-h">Quanto custa <strong>não ter marketing?</strong></h1>
+    <p class="hero-sub"><b>Marketing não é custo. É juro composto.</b> Cada ano de inação é receita que fica na mesa enquanto o mercado avança.</p>
+  </div>
+
+  <!-- Grafismo strip — shapes: pill · semicircle · quarter-round · circle
+       Equidistant height 40px, gap 8px. Only decorative, on edge. -->
+  <div class="gfx-strip">
+    <svg width="100%" height="48" viewBox="0 0 960 48" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="ht-w" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+          <circle cx="3" cy="3" r="1.3" fill="rgba(255,255,255,.3)"/>
+        </pattern>
+        <pattern id="ht-d" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+          <circle cx="3" cy="3" r="1.3" fill="rgba(7,38,111,.2)"/>
+        </pattern>
+        <linearGradient id="go-h" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#0E7BE8"/><stop offset="100%" stop-color="#00C8F0"/>
+        </linearGradient>
+      </defs>
+      <!-- y=4, h=40, gap=8 -->
+      <rect x="0" y="4" width="88" height="40" rx="20" fill="#2687E9"/>
+      <rect x="0" y="4" width="88" height="40" rx="20" fill="url(#ht-w)"/>
+      <path d="M108 4 A20 20 0 0 1 128 24 A20 20 0 0 1 108 44 L96 44 L96 4 Z" fill="#F9BD1D"/>
+      <path d="M136 44 A40 40 0 0 0 176 4 L136 4 Z" fill="#1B69C8"/>
+      <circle cx="216" cy="24" r="20" fill="#F9BD1D"/>
+      <circle cx="216" cy="24" r="20" fill="url(#ht-d)"/>
+      <rect x="244" y="4" width="72" height="40" rx="20" fill="#F0A700"/>
+      <path d="M348 4 A20 20 0 0 1 368 24 A20 20 0 0 1 348 44 L324 44 L324 4 Z" fill="#5AADF1"/>
+      <path d="M376 4 A40 40 0 0 1 416 44 L376 44 Z" fill="#F9BD1D"/>
+      <circle cx="456" cy="24" r="20" fill="#2687E9"/>
+      <rect x="484" y="4" width="88" height="40" rx="20" fill="url(#go-h)"/>
+      <path d="M612 4 A20 20 0 0 1 632 24 A20 20 0 0 1 612 44 L580 44 L580 4 Z" fill="#F9BD1D"/>
+      <path d="M640 44 A40 40 0 0 0 680 4 L640 4 Z" fill="#2687E9"/>
+      <path d="M640 44 A40 40 0 0 0 680 4 L640 4 Z" fill="url(#ht-w)"/>
+      <circle cx="720" cy="24" r="20" fill="#F9BD1D"/>
+      <rect x="748" y="4" width="80" height="40" rx="20" fill="#1B69C8"/>
+      <rect x="748" y="4" width="80" height="40" rx="20" fill="url(#ht-w)"/>
+      <path d="M880 4 A20 20 0 0 1 900 24 A20 20 0 0 1 880 44 L836 44 L836 4 Z" fill="#5AADF1"/>
+      <circle cx="940" cy="24" r="20" fill="#F9BD1D"/>
+    </svg>
+  </div>
+</header>
+
+<!-- Section divider — muted shapes on light bg -->
+<svg class="gfx-sep" viewBox="0 0 960 36" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="ht-b" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse">
+      <circle cx="2.5" cy="2.5" r=".9" fill="rgba(38,135,233,.25)"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="8" width="56" height="20" rx="10" fill="#2687E9" opacity=".11"/>
+  <rect x="0" y="8" width="56" height="20" rx="10" fill="url(#ht-b)"/>
+  <path d="M68 8 A10 10 0 0 1 78 18 A10 10 0 0 1 68 28 L60 28 L60 8 Z" fill="#F9BD1D" opacity=".3"/>
+  <path d="M84 28 A20 20 0 0 0 104 8 L84 8 Z" fill="#2687E9" opacity=".08"/>
+  <circle cx="120" cy="18" r="10" fill="#F9BD1D" opacity=".2"/>
+  <rect x="140" y="8" width="40" height="20" rx="10" fill="#1B69C8" opacity=".07"/>
+  <circle cx="196" cy="18" r="8" fill="#5AADF1" opacity=".15"/>
+</svg>
+
+<!-- ═══ PAGE ════════════════════════════════════════════ -->
+<div class="page">
+
+  <!-- ── CARD 1: CONFIGURE ──────────────────────────── -->
+  <div class="card">
+    <!-- Arena: quarter-round deco bottom-right -->
+    <svg class="card-deco" style="width:110px" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M159.377 0.620117C159.044 88.1514 88.1514 159.043 0.62011 159.376L0.620117 0.62011L159.377 0.620117Z" stroke="#2687E9" stroke-width="1.24"/>
+    </svg>
+
+    <div class="ct">Configure o cenário</div>
+
+    <div class="tabs">
+      <button class="tb" onclick="applyS('conservador')">Conservador</button>
+      <button class="tb act" onclick="applyS('moderado')">Moderado</button>
+      <button class="tb" onclick="applyS('agressivo')">Agressivo</button>
+      <button class="tb" id="tbC" style="display:none" onclick="applyS('custom')">Personalizado</button>
+    </div>
+
+    <div class="ig">
+      <div class="g">
+        <label>Faturamento anual</label>
+        <div class="iw"><span class="px">R$</span>
+          <input type="number" id="revenue" value="1000000" min="10000" max="999999999" step="10000">
+        </div>
+        <span class="wn" id="wr">Mínimo: R$ 10 mil.</span>
+      </div>
+      <div class="g">
+        <label>Crescimento <span class="h">sem marketing</span></label>
+        <div class="iw">
+          <input type="number" id="gnm" value="5" min="0" max="50">
+          <span class="sx">%</span>
+        </div>
+        <span class="wn" id="wg">0%–50%.</span>
+      </div>
+      <div class="g">
+        <label>Crescimento <span class="h">com marketing</span></label>
+        <div class="iw">
+          <input type="number" id="gwm" value="18" min="1" max="150">
+          <span class="sx">%</span>
+        </div>
+        <span class="wn" id="wgw">Deve ser maior que sem marketing.</span>
+      </div>
+      <div class="g">
+        <label>Investimento <span class="h">% da receita</span></label>
+        <div class="iw">
+          <input type="number" id="mkt" value="8" min="1" max="40" step="0.5">
+          <span class="sx">%</span>
+        </div>
+        <span class="wn" id="wm">1%–40%.</span>
+      </div>
+    </div>
+
+    <div class="dv"></div>
+
+    <div class="rg">
+      <label>Horizonte de projeção: <strong id="yl" style="color:var(--blue)">5 anos</strong></label>
+      <input type="range" id="years" min="1" max="10" value="5">
+      <div class="rl"><span>1 ano</span><span>5</span><span>10 anos</span></div>
+    </div>
+  </div>
+
+  <!-- ── CARD 2: RESULTADOS — clean stats, sem chips coloridos ── -->
+  <div class="card">
+    <!-- Arena: garrafao deco -->
+    <svg class="card-deco" style="width:72px;opacity:.04" viewBox="0 0 88 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M80 159.38C36.1596 159.38 0.62012 123.84 0.620124 80C0.620132 36.1596 36.1597 0.620113 80 0.620116L87.3799 0.620117L87.3799 159.38L80 159.38Z" stroke="#2687E9" stroke-width="1.24"/>
+    </svg>
+
+    <div class="ct">Projeção ao final de <span id="yt">5</span> anos</div>
+
+    <!-- Comparison: sem vs com — only typography, no colored backgrounds -->
+    <div class="cmp">
+      <div class="cmp-col dim">
+        <span class="cmp-lbl">Sem marketing</span>
+        <span class="cmp-val" id="vnm">—</span>
+        <span class="cmp-sub" id="dnm">—</span>
+      </div>
+      <div class="cmp-vs">vs</div>
+      <div class="cmp-col hi">
+        <span class="cmp-lbl">Com marketing</span>
+        <span class="cmp-val" id="vwm">—</span>
+        <span class="cmp-sub" id="dwm">—</span>
+      </div>
+    </div>
+
+    <!-- Key metrics row — no box containers, label + value pairs separated by line -->
+    <div class="km">
+      <div class="kmi">
+        <div class="km-l">Receita adicional</div>
+        <div class="km-v hi" id="vdelta">—</div>
+      </div>
+      <div class="kmi">
+        <div class="km-l">Investido em marketing</div>
+        <div class="km-v" id="vmktotal">—</div>
+      </div>
+      <div class="kmi">
+        <div class="km-l">ROI acumulado</div>
+        <div class="km-v hi" id="vroi">—</div>
+      </div>
+    </div>
+
+    <div class="co" id="co1">—</div>
+  </div>
+
+  <!-- ── CARD 3: CHART ──────────────────────────────── -->
+  <div class="card">
+    <div class="ct">Evolução do faturamento — com vs. sem marketing</div>
+    <div class="cw"><canvas id="growthChart"></canvas></div>
+  </div>
+
+  <!-- ── CARD 4: TABLE ──────────────────────────────── -->
+  <div class="card">
+    <div class="ct">Evolução ano a ano</div>
+    <div class="tw">
+      <table>
+        <thead>
+          <tr>
+            <th>Ano</th>
+            <th>Sem marketing</th>
+            <th>Com marketing</th>
+            <th>Investido em mkt</th>
+            <th>Ganho adicional</th>
+            <th>ROI acumulado</th>
+          </tr>
+        </thead>
+        <tbody id="ytb"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── CARD 5: MARKET SHARE ────────────────────────── -->
+  <div class="card">
+    <div class="ct">Perda de market share</div>
+    <div class="sg">
+      <div class="share-inputs">
+        <div class="g">
+          <label>Crescimento do mercado <span class="h">a.a.</span></label>
+          <div class="iw">
+            <input type="number" id="mg" value="10" min="1" max="50">
+            <span class="sx">%</span>
+          </div>
+        </div>
+        <div class="g">
+          <label>Seu share atual <span class="h">estimado</span></label>
+          <div class="iw">
+            <input type="number" id="ss" value="5" min="0.01" max="100" step="0.1">
+            <span class="sx">%</span>
+          </div>
+        </div>
+        <div class="co" id="co2" style="margin-top:0">—</div>
+      </div>
+      <div class="sbars">
+        <div class="sr">
+          <div class="srh"><span class="srl">Share hoje</span><span class="srv" id="ssv">—</span></div>
+          <div class="bt"><div class="bf st" id="ssb" style="width:5%"></div></div>
+        </div>
+        <div class="sr">
+          <div class="srh"><span class="srl">Sem marketing (em <span id="yls">5</span> anos)</span><span class="srv" id="snmv">—</span></div>
+          <div class="bt"><div class="bf nm" id="snmb" style="width:4%"></div></div>
+        </div>
+        <div class="sr">
+          <div class="srh"><span class="srl">Com marketing</span><span class="srv" id="swmv">—</span></div>
+          <div class="bt"><div class="bf wm" id="swmb" style="width:6%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CTA — section-break: 0 0 80px 80px ────────── -->
+  <div class="cta">
+    <svg class="cta-al" viewBox="0 0 88 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M80 159.38C36.1596 159.38 0.62012 123.84 0.620124 80C0.620132 36.1596 36.1597 0.620113 80 0.620116L87.3799 0.620117L87.3799 159.38L80 159.38Z" stroke="#2687E9" stroke-width="1.24"/>
+    </svg>
+    <svg class="cta-ar" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M159.377 0.620117C159.044 88.1514 88.1514 159.043 0.62011 159.376L0.620117 0.62011L159.377 0.620117Z" stroke="#2687E9" stroke-width="1.24"/>
+    </svg>
+    <div class="cta-in">
+      <h2>Você já tem o diagnóstico. <strong>Agora coloque em prática.</strong></h2>
+      <p>A Conta Azul organiza suas finanças para você liberar margem e investir em crescimento.</p>
+      <a href="https://app.contaazul.com/auth/signup" target="_blank" class="btn">Teste grátis por 30 dias</a>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<footer class="ft">
+  Projeção simplificada para fins educativos. Crescimento composto aplicado sobre o faturamento do ano base. Investimento em marketing deduzido da receita com marketing para apurar ROI líquido. Não substitui análise financeira profissional.<br>
+  <span style="display:block;margin-top:4px">© 2026 Conta Azul. Todos os direitos reservados.</span>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+
+  var SCENARIOS = {
+    conservador:{gnm:3,gwm:12,mkt:5},
+    moderado:   {gnm:5,gwm:18,mkt:8},
+    agressivo:  {gnm:5,gwm:30,mkt:12}
+  };
+  var chart = null;
+
+  /* ── Helpers ─────────────────────────────── */
+  function fmt(n){
+    var a=Math.abs(n),s=n<0?'-':'';
+    if(a>=1e9)return s+'R$ '+(a/1e9).toFixed(2).replace('.',',')+'B';
+    if(a>=1e6)return s+'R$ '+(a/1e6).toFixed(2).replace('.',',')+'M';
+    if(a>=1e3)return s+'R$ '+(a/1e3).toFixed(0)+'K';
+    return s+'R$ '+a.toFixed(0);
+  }
+  function pct(n,d){return(n).toFixed(d===undefined?1:d).replace('.',',')+'%';}
+  function roi(n){return(n>=0?'+':'')+Math.round(n)+'%';}
+  function cpd(b,r,y){return b*Math.pow(1+r/100,y);}
+  function v(id){return document.getElementById(id).value;}
+  function el(id){return document.getElementById(id);}
+
+  /* ── Validation ──────────────────────────── */
+  function validate(){
+    var rev=+v('revenue'),gnm=+v('gnm'),gwm=+v('gwm'),mkt=+v('mkt');
+    var ok=true;
+    function chk(id,wid,cond,msg){
+      var e=el(id),w=el(wid);
+      e.classList.toggle('warn',!cond);
+      w.textContent=msg;
+      w.classList.toggle('vis',!cond);
+      if(!cond)ok=false;
+    }
+    chk('revenue','wr',rev>=10000,'Mínimo: R$ 10 mil.');
+    chk('gnm','wg',gnm>=0&&gnm<=50,'0%–50%.');
+    chk('gwm','wgw',gwm>gnm&&gwm<=150,'Deve ser maior que sem marketing.');
+    chk('mkt','wm',mkt>=1&&mkt<=40,'1%–40%.');
+    return ok;
+  }
+
+  /* ── Scenarios ───────────────────────────── */
+  function applyS(key){
+    document.querySelectorAll('.tb').forEach(function(b){b.classList.remove('act');});
+    var tc=el('tbC');
+    if(key==='custom'){tc.classList.add('act');return;}
+    tc.style.display='none';
+    var s=SCENARIOS[key];
+    el('gnm').value=s.gnm;el('gwm').value=s.gwm;el('mkt').value=s.mkt;
+    document.querySelectorAll('.tb').forEach(function(b){
+      if(b.textContent.trim().toLowerCase()===key)b.classList.add('act');
+    });
+    recalc();
+  }
+  window.applyS=applyS;
+
+  ['gnm','gwm','mkt','revenue'].forEach(function(id){
+    el(id).addEventListener('input',function(){
+      var tc=el('tbC');tc.style.display='';
+      document.querySelectorAll('.tb').forEach(function(b){b.classList.remove('act');});
+      tc.classList.add('act');
+    });
+  });
+
+  /* ── Recalc ──────────────────────────────── */
+  function recalc(){
+    if(!validate())return;
+    var rev=+v('revenue'),gnm=+v('gnm'),gwm=+v('gwm'),mktP=+v('mkt')/100;
+    var yrs=+v('years'),mktG=+v('mg'),shr=+v('ss');
+
+    var yl=yrs+(yrs===1?' ano':' anos');
+    el('yl').textContent=yl;el('yt').textContent=yrs;el('yls').textContent=yrs;
+
+    var labels=['Hoje'],sNm=[rev],sWm=[rev];
+    var totMkt=0,accNm=0,accWm=0,rows=[];
+
+    for(var y=1;y<=yrs;y++){
+      var rNm=cpd(rev,gnm,y),rWm=cpd(rev,gwm,y),mktY=rWm*mktP;
+      totMkt+=mktY;accNm+=rNm;accWm+=rWm;
+      labels.push('Ano '+y);sNm.push(Math.round(rNm));sWm.push(Math.round(rWm));
+      var accGain=accWm-accNm;
+      var roiAcc=totMkt>0?((accGain-totMkt)/totMkt)*100:0;
+      rows.push({y:y,rNm:rNm,rWm:rWm,mktY:mktY,gain:rWm-rNm,roiA:roiAcc});
+    }
+
+    var fNm=sNm[sNm.length-1],fWm=sWm[sWm.length-1];
+    var delta=fWm-fNm,accD=accWm-accNm;
+    var roiFin=totMkt>0?((accD-totMkt)/totMkt)*100:0;
+    var mult=(fWm/fNm).toFixed(1);
+
+    /* Stats */
+    el('vnm').textContent=fmt(fNm);
+    el('dnm').textContent=gnm+'% a.a. por '+yl;
+    el('vwm').textContent=fmt(fWm);
+    el('dwm').textContent=gwm+'% a.a. por '+yl;
+    el('vdelta').textContent=fmt(delta);
+    el('vmktotal').textContent=fmt(totMkt);
+    el('vroi').textContent=roi(roiFin);
+
+    /* Callout */
+    el('co1').innerHTML=
+      'Com marketing, você fatura <span class="n">'+fmt(fWm)+'</span> no '+yrs+'º ano — '+
+      '<strong>'+mult+'× mais</strong> do que os '+fmt(fNm)+' sem marketing. '+
+      'O investimento acumulado de '+fmt(totMkt)+' gera <strong>ROI de '+roi(roiFin)+'</strong>.';
+
+    /* Chart */
+    buildChart(labels,sNm,sWm);
+
+    /* Table */
+    var tbody=el('ytb');tbody.innerHTML='';
+    rows.forEach(function(r){
+      var tr=document.createElement('tr');
+      tr.innerHTML=
+        '<td>Ano '+r.y+'</td>'+
+        '<td>'+fmt(r.rNm)+'</td>'+
+        '<td class="hl">'+fmt(r.rWm)+'</td>'+
+        '<td class="neg">− '+fmt(r.mktY)+'</td>'+
+        '<td class="pos">+ '+fmt(r.gain)+'</td>'+
+        '<td class="'+(r.roiA>=0?'pos':'neg')+'">'+roi(r.roiA)+'</td>';
+      tbody.appendChild(tr);
+    });
+
+    /* Market share */
+    var mszN=rev/(shr/100),mszF=mszN*Math.pow(1+mktG/100,yrs);
+    var shNm=(fNm/mszF)*100,shWm=(fWm/mszF)*100,shLoss=shr-shNm;
+    el('ssv').textContent=pct(shr);
+    el('snmv').textContent=pct(shNm);
+    el('swmv').textContent=pct(shWm);
+    var mx=Math.max(shr,shWm,0.1);
+    el('ssb').style.width=Math.min(100,shr/mx*100)+'%';
+    el('snmb').style.width=Math.min(100,shNm/mx*100)+'%';
+    el('swmb').style.width=Math.min(100,shWm/mx*100)+'%';
+    el('co2').innerHTML=shLoss>0
+      ?'Sem marketing, em '+yl+' você perde <strong>'+pct(shLoss)+'</strong> de market share: de <span class="n">'+pct(shr)+'</span> para <span class="n">'+pct(shNm)+'</span>. Com marketing: <strong>'+pct(shWm)+'</strong>.'
+      :'Com marketing você cresce de <span class="n">'+pct(shr)+'</span> para <span class="n">'+pct(shWm)+'</span>.';
+  }
+
+  /* ── Chart ───────────────────────────────── */
+  function buildChart(labels,dNm,dWm){
+    var ctx=el('growthChart').getContext('2d');
+    if(chart){chart.destroy();chart=null;}
+    chart=new Chart(ctx,{
+      type:'line',
+      data:{
+        labels:labels,
+        datasets:[
+          {label:'Com marketing',data:dWm,borderColor:'#2687E9',backgroundColor:'rgba(38,135,233,.06)',
+           borderWidth:2.5,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:'#2687E9',fill:false,tension:.4},
+          {label:'Sem marketing',data:dNm,borderColor:'#C9D3DD',backgroundColor:'transparent',
+           borderWidth:2,pointRadius:3,pointHoverRadius:5,pointBackgroundColor:'#C9D3DD',
+           borderDash:[6,4],fill:false,tension:.4}
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        interaction:{mode:'index',intersect:false},
+        plugins:{
+          legend:{labels:{color:'#595959',font:{size:11},boxWidth:18,padding:12,usePointStyle:true,pointStyle:'circle'}},
+          tooltip:{
+            backgroundColor:'#fff',borderColor:'#C9D3DD',borderWidth:1,
+            titleColor:'#35414B',bodyColor:'#20262B',padding:11,
+            callbacks:{
+              label:function(c){return '  '+c.dataset.label+': '+fmt(c.parsed.y);},
+              afterBody:function(items){
+                if(items.length<2)return;
+                return['','  Diferença: +'+fmt(items[0].parsed.y-items[1].parsed.y)];
+              }
+            }
+          }
+        },
+        scales:{
+          x:{ticks:{color:'#ADB5BD',font:{size:10}},grid:{color:'#EFF3F7'}},
+          y:{ticks:{color:'#ADB5BD',font:{size:10},callback:function(v){return fmt(v);}},grid:{color:'#EFF3F7'}}
+        }
+      }
+    });
+  }
+
+  /* ── Init ────────────────────────────────── */
+  ['revenue','gnm','gwm','mkt','years','mg','ss'].forEach(function(id){
+    el(id).addEventListener('input',recalc);
+  });
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',recalc);
+  } else {
+    recalc();
+  }
+
+})();
+</script>
+</body>
+</html>
