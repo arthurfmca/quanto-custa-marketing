@@ -51,6 +51,8 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
+/* Prevent horizontal scroll on all viewports */
+html,body{overflow-x:hidden;max-width:100%;}
 body{font-family:var(--f);background:var(--blue-bg);color:var(--fg2);line-height:1.5;}
 
 /* ── HERO ─────────────────────────────────────────────
@@ -311,18 +313,141 @@ tbody tr:hover{background:var(--n100);}
 /* Button pulse on hover */
 .btn:hover{animation:btnPulse 1.6s ease infinite;}
 
-/* ── RESPONSIVE ────────────────────────────────── */
+/* ── RESPONSIVE — mobile-first for 55–60 year old users ──────────────────
+   Priorities: larger text, bigger touch targets, single-column layout,
+   no horizontal overflow, comfortable spacing.
+   ────────────────────────────────────────────────────────────────────── */
 @media(max-width:580px){
-  :root{--hdr-h:52px;}
-  .card{padding:22px 18px;}
-  .hero{padding:calc(var(--hdr-h) + 20px) 16px 68px;}
-  .ig{grid-template-columns:1fr;}
+  /* Root: increase header height for comfortable tap */
+  :root{--hdr-h:56px;}
+
+  /* Prevent any horizontal scroll */
+  html,body{overflow-x:hidden;max-width:100%;width:100%;}
+  .page,.stickybar-in,.hero-in{max-width:100%;}
+
+  /* ── Base font size bump for older users ── */
+  body{font-size:17px;}
+
+  /* ── Sticky header ── */
+  .stickybar-in{padding:0 14px;}
+  .stickybar .btn{font-size:15px;padding:11px 20px;min-height:44px;}
+
+  /* ── Hero: single-column, more padding ── */
+  .hero{padding:calc(var(--hdr-h) + 24px) 18px 72px;}
+  .hero-h{font-size:clamp(28px,7vw,44px);letter-spacing:-1.2px;}
+  .hero-sub{font-size:16px;line-height:1.7;}
+  /* Hide large decorative SVGs that may cause overflow */
+  .a-right{display:none;}
+  .a-circle{display:none;}
+
+  /* ── Page container ── */
+  .page{padding:20px 14px 64px;gap:20px;}
+
+  /* ── Cards: full-width, more padding ── */
+  .card{padding:28px 20px;width:100%;}
+
+  /* ── Card title ── */
+  .ct{font-size:15px;}
+
+  /* ── Intro box text ── */
+  .intro{font-size:14px;line-height:1.65;padding:12px 16px;}
+
+  /* ── Tabs: larger touch targets ── */
+  .tb{font-size:13px;padding:10px 18px;min-height:44px;display:inline-flex;align-items:center;}
+
+  /* ── Scenario description ── */
+  .sc-desc{font-size:14px;}
+
+  /* ── Input grid: single column ── */
+  .ig{grid-template-columns:1fr;gap:18px;}
+
+  /* ── Labels and hints ── */
+  label{font-size:16px;font-weight:600;}
+  .hint{font-size:14px;line-height:1.5;margin-top:5px;}
+  .wn{font-size:13px;}
+
+  /* ── Inputs and selects: tall touch targets ── */
+  input[type=number],
+  .num-i{
+    font-size:17px;
+    padding:14px 40px 14px 34px;
+    min-height:52px;
+  }
+  .px{font-size:14px;left:12px;}
+  .sx{font-size:14px;right:12px;}
+
+  /* ── Range slider ── */
+  .rg label{font-size:16px;}
+  .rg input[type=range]{height:8px;}
+  .rg input[type=range]::-webkit-slider-thumb{width:26px;height:26px;}
+  .rl{font-size:13px;}
+
+  /* ── Comparison grid: keep 1fr 24px 1fr, just fix fonts ── */
   .cmp{grid-template-columns:1fr 24px 1fr;}
-  .cmp-val{font-size:22px;}
-  .km{gap:12px;}
-  .kmi{border-right:none;padding-right:0;margin-right:0;border-bottom:1px solid var(--n200);padding-bottom:12px;margin-bottom:0;}
-  .kmi:last-child{border-bottom:none;}
-  .cta{padding:32px 20px 40px;}
+  .cmp-val{font-size:26px;letter-spacing:-.8px;}
+  .cmp-lbl{font-size:11px;}
+  .cmp-sub{font-size:13px;}
+  .cmp-vs{font-size:12px;}
+  .cmp-win{font-size:11px;padding:4px 10px;}
+
+  /* ── Key metrics: stack vertically ── */
+  .km{gap:14px;padding-top:20px;}
+  .kmi{
+    border-right:none;
+    padding-right:0;
+    margin-right:0;
+    border-bottom:1px solid var(--n200);
+    padding-bottom:14px;
+    margin-bottom:0;
+    min-width:100%;
+  }
+  .kmi:last-child{border-bottom:none;padding-bottom:0;}
+  .km-l{font-size:14px;margin-bottom:6px;}
+  .km-v{font-size:22px;}
+
+  /* ── Callout ── */
+  .co{font-size:14px;line-height:1.7;padding:14px 16px;}
+
+  /* ── Chart ── */
+  .cw{height:220px;}
+
+  /* ── Table: allow horizontal scroll, bump font ── */
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  table{font-size:13px;}
+  thead th{font-size:11px;padding:10px 8px;}
+  tbody td{padding:11px 8px;font-size:13px;}
+
+  /* ── Market share section ── */
+  .sg{grid-template-columns:1fr;gap:20px;}
+  .srl{font-size:14px;}
+  .srv{font-size:16px;}
+  .bt{height:10px;}
+
+  /* ── CTA: bigger padding, bigger text ── */
+  .cta{padding:36px 22px 44px;border-radius:0 0 60px 60px;}
+  .cta h2{font-size:clamp(22px,5.5vw,28px);letter-spacing:-.8px;margin-bottom:12px;}
+  .cta p{font-size:15px;line-height:1.65;margin-bottom:26px;}
+  .btn{font-size:18px;padding:16px 36px;min-height:56px;display:inline-flex;align-items:center;justify-content:center;}
+
+  /* ── Footer ── */
+  .ft{font-size:12px;padding:24px 16px;}
+
+  /* ── Tooltip: prevent overflow ── */
+  .tip::after{
+    left:auto;
+    right:0;
+    transform:none;
+    max-width:240px;
+    min-width:160px;
+  }
+  .tip::before{
+    left:auto;
+    right:8px;
+    transform:none;
+  }
+
+  /* ── Divider ── */
+  .dv{margin:24px 0;}
 }
 </style>
 </head>
